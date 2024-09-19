@@ -50,7 +50,7 @@ class News extends ResourceController
         $newsModel = new NewsModel();
         $data = [
             'title' => $title,
-            'intro' => $intro,
+            'introduction' => $intro,
             'body' => $body,
             'author_id' => $authorId,
         ];
