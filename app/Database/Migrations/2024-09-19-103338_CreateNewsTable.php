@@ -11,12 +11,12 @@ class CreateNewsTable extends Migration
         $this->forge->addField([
             'id' => [
                 'type' => 'INT',
+                'unsigned' => true,  // Match this with 'id' in the 'users' table
                 'auto_increment' => true,
             ],
             'title' => [
                 'type' => 'VARCHAR',
                 'constraint' => '255',
-                'null' => false,
             ],
             'introduction' => [
                 'type' => 'VARCHAR',
@@ -25,17 +25,17 @@ class CreateNewsTable extends Migration
             ],
             'body' => [
                 'type' => 'TEXT',
-                'null' => false,
             ],
             'created_at' => [
                 'type' => 'TIMESTAMP',
-                'default' => 'CURRENT_TIMESTAMP',
+                'default' => date('Y-m-d H:i:s'),
             ],
             'author_id' => [
                 'type' => 'INT',
-                'null' => true,
+                'unsigned' => true,  // Ensure this is unsigned to match 'id' in 'users'
             ],
         ]);
+
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('author_id', 'users', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('news');

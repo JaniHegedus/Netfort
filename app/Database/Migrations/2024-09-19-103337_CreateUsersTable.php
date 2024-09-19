@@ -11,34 +11,34 @@ class CreateUsersTable extends Migration
         $this->forge->addField([
             'id' => [
                 'type' => 'INT',
+                'unsigned' => true,  // Make sure this is unsigned
                 'auto_increment' => true,
             ],
-            'title' => [
+            'auth_id' => [
+                'type' => 'INT',
+                'unsigned' => true,
+            ],
+            'first_name' => [
                 'type' => 'VARCHAR',
                 'constraint' => '255',
             ],
-            'intro' => [
-                'type' => 'TEXT',
-                'null' => true,
+            'last_name' => [
+                'type' => 'VARCHAR',
+                'constraint' => '255',
             ],
-            'body' => [
-                'type' => 'TEXT',
-            ],
-            'created_at' => [
-                'type' => 'TIMESTAMP',
-                'default' => date('Y-m-d H:i:s'),
-            ],
-            'author_id' => [
-                'type' => 'INT',
+            'phone' => [
+                'type' => 'VARCHAR',
+                'constraint' => '20',
             ],
         ]);
+
         $this->forge->addKey('id', true);
-        $this->forge->addForeignKey('author_id', 'users', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->createTable('news');
+        $this->forge->addForeignKey('auth_id', 'auth', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->createTable('users');
     }
 
     public function down()
     {
-        $this->forge->dropTable('news');
+        $this->forge->dropTable('users');
     }
 }

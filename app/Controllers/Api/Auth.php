@@ -3,6 +3,7 @@
 namespace App\Controllers\Api;
 
 use App\Helpers\JwtHelper;
+use App\Models\AuthModel;
 use App\Models\UserModel;
 use CodeIgniter\RESTful\ResourceController;
 
@@ -25,7 +26,7 @@ class Auth extends ResourceController
         $validation = \Config\Services::validation();
         $validation->setRules([
             'email' => [
-                'rules' => 'required|valid_email|is_unique[users.email]',
+                'rules' => 'required|valid_email|is_unique[auth.email]',
                 'errors' => [
                     'required' => 'Email is required',
                     'valid_email' => 'A valid email is required',
@@ -60,20 +61,31 @@ class Auth extends ResourceController
         // Hash password securely
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-        // Insert into the database
-        $userModel = new UserModel();
-        $data = [
+        // Insert into auth table
+        $authModel = new AuthModel();
+        $authData = [
             'email' => $email,
             'password' => $hashedPassword,
-            'phone' => $phone,
-            'first_name' => $firstName,
-            'last_name' => $lastName,
         ];
 
-        if ($userModel->insert($data)) {
+        $authId = $authModel->insert($authData);
+        if (!$authId) {
+            return $this->fail('Registration failed', 500);
+        }
+
+        // Insert into users table
+        $userModel = new UserModel();
+        $userData = [
+            'auth_id' => $authId,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'phone' => $phone,
+        ];
+
+        if ($userModel->insert($userData)) {
             return $this->respondCreated(['message' => 'User registered successfully']);
         } else {
-            return $this->fail('Registration failed', 500);
+            return $this->fail('User information registration failed', 500);
         }
     }
 
@@ -89,14 +101,17 @@ class Auth extends ResourceController
         $email = $requestData->email;
         $password = $requestData->password;
 
-        // Fetch the user by email
-        $userModel = new UserModel();
-        $user = $userModel->where('email', $email)->first();
+        // Fetch the user from the auth table by email
+        $authModel = new AuthModel();
+        $userAuth = $authModel->where('email', $email)->first();
 
         // Check if the user exists and the password is correct
-        if ($user && password_verify($password, $user['password'])) {
+        if ($userAuth && password_verify($password, $userAuth['password'])) {
+            // Update the last_login field with the current timestamp
+            $authModel->update($userAuth['id'], ['last_login' => date('Y-m-d H:i:s')]);
+
             // Generate the JWT token
-            $token = JwtHelper::generateJwt($user['id']);
+            $token = JwtHelper::generateJwt($userAuth['id']);
 
             return $this->respond([
                 'status' => 200,
@@ -107,4 +122,5 @@ class Auth extends ResourceController
             return $this->fail('Invalid email or password', 401);
         }
     }
+
 }
