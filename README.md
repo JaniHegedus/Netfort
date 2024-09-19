@@ -1,68 +1,127 @@
-# CodeIgniter 4 Application Starter
 
-## What is CodeIgniter?
+# News Upload API Documentation
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## Bevezetés
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+Ez az API a hírek feltöltésére szolgál, és JWT (JSON Web Token) alapú autentikációt használ a felhasználók azonosítására. A felhasználók csak érvényes JWT tokennel tölthetnek fel híreket.
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## Végpontok
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+### 1. Hír feltöltés
 
-## Installation & updates
+**URL**: `/api/news/upload`  
+**Módszer**: `POST`  
+**Autentikáció**: Szükséges (`Bearer` token az `Authorization` fejléccel)
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+#### Fejléc
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+```shell
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
 
-## Setup
+#### Kérelem testje
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+```json
+{
+  "title": "A hír címe",
+  "intro": "A hír bevezetője",
+  "body": "A hír teljes szövege",
+  "author_id": 1  // opcionális, ha nincs megadva, akkor a tokenből nyerjük ki
+}
+```
 
-## Important Change with index.php
+#### Példa kérés
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+```shell
+curl -X POST https://your-api-domain/api/news/upload \
+-H "Authorization: Bearer <JWT_TOKEN>" \
+-H "Content-Type: application/json" \
+-d '{
+  "title": "Új hír a platformon",
+  "intro": "Ez egy bevezető a hírhez",
+  "body": "Itt van a hír teljes tartalma",
+  "author_id": 1
+}'
+```
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+#### Válaszok
 
-**Please** read the user guide for a better explanation of how CI4 works!
+##### Sikeres válasz (201)
 
-## Repository Management
+```json
+{
+  "message": "News uploaded successfully"
+}
+```
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+##### Hibás válaszok
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+1. **401 Unauthorized** - Ha a token érvénytelen vagy hiányzik.
 
-## Server Requirements
+```json
+{
+  "message": "Unauthorized: Invalid or expired token"
+}
+```
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+2. **400 Bad Request** - Hiányzó vagy hibás adatok esetén (pl. hiányzó cím vagy tartalom).
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+```json
+{
+  "message": "Title and body are required"
+}
+```
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+3. **500 Internal Server Error** - Ha valamilyen hiba történik az adatbázisba való mentés során.
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+```json
+{
+  "message": "Upload failed"
+}
+```
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+## Token Kezelés
+
+### 1. Login
+
+A token megszerzéséhez először be kell jelentkezni a felhasználónak.
+
+**URL**: `/api/auth/login`  
+**Módszer**: `POST`  
+**Kérelem testje**:
+
+```json
+{
+  "email": "felhasznalo@example.com",
+  "password": "Jelszo123"
+}
+```
+
+**Sikeres válasz**:
+
+```json
+{
+  "status": 200,
+  "message": "Login successful",
+  "token": "<JWT_TOKEN>"
+}
+```
+
+A token a későbbi kérések során a fejlécben küldendő a `Bearer <JWT_TOKEN>` formátumban.
+
+## Hibakezelés
+
+Az API hibás kérések esetén megfelelő HTTP státuszkódot ad vissza (`401 Unauthorized`, `400 Bad Request`, `500 Internal Server Error`), és egy üzenetet, amely segít megérteni a hiba okát.
+
+---
+
+## Fejlesztési Megjegyzések
+
+- Az API JWT alapú autentikációt használ, amit a `Authorization` fejlécben kell megadni minden védett végpont esetén.
+- A token érvényességének ellenőrzése a `JwtHelper` osztályon keresztül történik, ami automatikusan kezeli az érvénytelen vagy lejárt tokeneket.
+- Az API a `NewsModel` segítségével menti az adatokat az adatbázisba.
+
+## License
+
+A projekt licenszelt az [MIT License](https://opensource.org/licenses/MIT) alatt.
