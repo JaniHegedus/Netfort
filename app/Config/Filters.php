@@ -74,7 +74,7 @@ class Filters extends BaseFilters
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
-            'authFilter' => ['except' => ['api/login', 'api/register']], // Apply the filter globally except for login/register
+            'authFilter' => ['except' => ['api/login', 'api/register','api/news/get']], // Apply the filter globally except for login/register
         ],
         'after' => [
             // 'honeypot',

@@ -61,4 +61,19 @@ class News extends ResourceController
             return $this->fail('Upload failed', 500);
         }
     }
+    public function getNews()
+    {
+        // Retrieve all news from the database
+        $newsModel = new NewsModel();
+        $newsData = $newsModel->findAll(); // Fetch all news entries
+
+        // Check if any news entries were found
+        if (!$newsData) {
+            return $this->failNotFound('No news found');
+        }
+
+        // Return the news data as a response
+        return $this->respond($newsData);
+    }
+
 }

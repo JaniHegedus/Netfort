@@ -18,7 +18,7 @@ php spark serve
 
 ### 1. Hír feltöltés
 
-**URL**: `/api/news`  
+**URL**: `/api/news/upload`  
 **Módszer**: `POST`  
 **Autentikáció**: Szükséges (`Bearer` token az `Authorization` fejléccel)
 
@@ -56,7 +56,7 @@ curl -X POST https://your-api-domain/api/news \
 
 #### Válaszok
 
-##### Sikeres válasz (201)
+##### Sikeres válasz (200)
 
 ```json
 {
@@ -90,15 +90,71 @@ curl -X POST https://your-api-domain/api/news \
 }
 ```
 
+### 2. Hírek elkérése
+
+Nincs Authorizáció
+
+**URL**: `/api/news/get`  
+**Módszer**: `GET`
+
+#### Kérelem testje
+
+```json
+{
+   //EMPTY
+}
+```
+
+#### Példa kérés
+
+```shell
+curl -X POST https://your-api-domain/api/news \
+-H "Authorization: Bearer <JWT_TOKEN>" \
+-H "Content-Type: application/json" \
+-d '{
+  "title": "Új hír a platformon",
+  "intro": "Ez egy bevezető a hírhez",
+  "body": "Itt van a hír teljes tartalma",
+  "author_id": 1
+}'
+```
+
+#### Válaszok
+
+##### Sikeres válasz (200)
+
+```json
+[
+  {
+    "id": "1",
+    "title": "Breaking News",
+    "introduction": "This is a brief introduction to the news.",
+    "body": "This is the main content of the news article.",
+    "created_at": "2024-09-19 12:32:11",
+    "author_id": "1"
+  }
+]
+```
+
+##### Hibás válaszok
+
+1. **500 Internal Server Error** - Ha valamilyen hiba történik az adatbázisba való mentés során.
+
+```json
+{
+  "message": "No news found"
+}
+```
 ## Token Kezelés
-### 1. Register
+### 3. Register
 
 Felhasználó készítés
 
 ##Szabályok:
 
 ```json
-	    'email' => [
+	    (
+            'email' => [
                 'rules' => 'required|valid_email|is_unique[auth.email]',
                 'errors' => [
                     'required' => 'Email is required',
@@ -124,7 +180,8 @@ Felhasználó készítés
             ],
             'first_name' => 'required',
             'last_name' => 'required',
-        ]);
+            ]
+        )
 ```
 **URL**: `/api/register`  
 **Módszer**: `POST`  
@@ -155,7 +212,7 @@ Felhasználó készítés
   "message": 'User information registration failed'
 }
 ```
-### 2. Login
+### 4. Login
 
 A token megszerzéséhez először be kell jelentkezni a felhasználónak.
 
