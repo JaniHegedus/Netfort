@@ -9,7 +9,7 @@ Ez az API a hírek feltöltésére szolgál, és JWT (JSON Web Token) alapú aut
 
 ### 1. Hír feltöltés
 
-**URL**: `/api/news/upload`  
+**URL**: `/api/news`  
 **Módszer**: `POST`  
 **Autentikáció**: Szükséges (`Bearer` token az `Authorization` fejléccel)
 
@@ -34,7 +34,7 @@ Content-Type: application/json
 #### Példa kérés
 
 ```shell
-curl -X POST https://your-api-domain/api/news/upload \
+curl -X POST https://your-api-domain/api/news \
 -H "Authorization: Bearer <JWT_TOKEN>" \
 -H "Content-Type: application/json" \
 -d '{
@@ -82,12 +82,74 @@ curl -X POST https://your-api-domain/api/news/upload \
 ```
 
 ## Token Kezelés
+### 1. Register
 
-### 1. Login
+Felhasználó készítés
+
+##Szabályok:
+```json
+	    'email' => [
+                'rules' => 'required|valid_email|is_unique[auth.email]',
+                'errors' => [
+                    'required' => 'Email is required',
+                    'valid_email' => 'A valid email is required',
+                    'is_unique' => 'This email is already registered'
+                ]
+            ],
+            'password' => [
+                'rules' => 'required|min_length[6]|max_length[12]|regex_match[/[A-Z]/]|regex_match[/[0-9]/]',
+                'errors' => [
+                    'required' => 'Password is required',
+                    'min_length' => 'Password must be at least 6 characters',
+                    'max_length' => "12 characters",
+                    'regex_match' => 'Password must contain at least one uppercase letter and one number'
+                ],
+            ],
+            'phone' => [
+                'rules' => 'required|regex_match[/^\+36\/70\/\d{3}-\d{4}$/]',
+                'errors' => [
+                    'required' => 'Phone number is required',
+                    'regex_match' => 'Phone number format is invalid, expected +36/70/xxx-xxxx'
+                ]
+            ],
+            'first_name' => 'required',
+            'last_name' => 'required',
+        ]);
+```
+**URL**: `/api/register`  
+**Módszer**: `POST`  
+**Kérelem testje**:
+
+```json
+{
+  "email": "test2@example.com",
+  "password": "Password1",
+  "phone": "+36/70/123-4567",
+  "first_name": "John",
+  "last_name": "Doe"
+}
+```
+**Sikeres válasz**:
+```json
+{
+  "status": 200,
+  "message": 'User registered successfully'
+}
+```
+##### Hibás válasz
+
+1. **500 Internal server error** - Ha a hiba történik regisztráció során.
+
+```json
+{
+  "message": 'User information registration failed'
+}
+```
+### 2. Login
 
 A token megszerzéséhez először be kell jelentkezni a felhasználónak.
 
-**URL**: `/api/auth/login`  
+**URL**: `/api/login`  
 **Módszer**: `POST`  
 **Kérelem testje**:
 
