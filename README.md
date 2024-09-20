@@ -155,7 +155,7 @@ Felhasználó készítés
 
 ##Szabályok:
 
-```json
+```php
 	    (
             'email' => [
                 'rules' => 'required|valid_email|is_unique[auth.email]',
