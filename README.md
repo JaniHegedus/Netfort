@@ -5,7 +5,7 @@
 
 Ez az API a hírek feltöltésére szolgál, és JWT (JSON Web Token) alapú autentikációt használ a felhasználók azonosítására. A felhasználók csak érvényes JWT tokennel tölthetnek fel híreket.
 
-##Projekt indítása
+## Projekt indítása
 
 ```shell
 git clone https://github.com/JaniHegedus/Netfort.git
@@ -139,7 +139,7 @@ Felhasználó készítés
   "last_name": "Doe"
 }
 ```
-**Sikeres válasz**:
+** Sikeres válasz**:
 ```json
 {
   "status": 200,
