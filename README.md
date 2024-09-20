@@ -14,7 +14,7 @@ Az env fájl példája adott, adatbázis használatához kötelező illetve JWT 
 git clone https://github.com/JaniHegedus/Netfort.git
 cd Netfort
 composer install
-copy env .env
+cp env .env
 php spark serve
 ```
 
