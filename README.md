@@ -203,7 +203,7 @@ Felhasználó készítés
 ```json
 {
   "status": 200,
-  "message": 'User registered successfully'
+  "message": "User registered successfully"
 }
 ```
 ##### Hibás válasz
@@ -212,7 +212,7 @@ Felhasználó készítés
 
 ```json
 {
-  "message": 'User information registration failed'
+  "message": "User information registration failed"
 }
 ```
 ### 4. Login
