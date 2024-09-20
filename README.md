@@ -7,6 +7,9 @@ Ez az API a hírek feltöltésére szolgál, és JWT (JSON Web Token) alapú aut
 
 ## Projekt indítása
 
+XAMPP használata ajánlott, illetve az adatbázis létrehozása szükséges.
+Az env fájl példája adott, adatbázis használatához kötelező illetve JWT saját kulcs megadása ott történik.
+
 ```shell
 git clone https://github.com/JaniHegedus/Netfort.git
 cd Netfort
