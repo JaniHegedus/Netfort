@@ -146,7 +146,7 @@ curl -X GET https://your-api-domain/api/news/get
 
 Felhasználó készítés
 
-##Szabályok:
+## Szabályok:
 
 ```php
 	    (
