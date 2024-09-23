@@ -112,7 +112,7 @@ Nincs Authorizáció
 #### Példa kérés
 
 ```shell
-curl -X POST https://your-api-domain/api/news/get 
+curl -X GET https://your-api-domain/api/news/get 
 ```
 
 #### Válaszok
