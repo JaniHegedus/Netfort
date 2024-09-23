@@ -47,7 +47,7 @@ Content-Type: application/json
 #### Példa kérés
 
 ```shell
-curl -X POST https://your-api-domain/api/news \
+curl -X POST https://your-api-domain/api/news/upload \
 -H "Authorization: Bearer <JWT_TOKEN>" \
 -H "Content-Type: application/json" \
 -d '{
@@ -112,15 +112,7 @@ Nincs Authorizáció
 #### Példa kérés
 
 ```shell
-curl -X POST https://your-api-domain/api/news \
--H "Authorization: Bearer <JWT_TOKEN>" \
--H "Content-Type: application/json" \
--d '{
-  "title": "Új hír a platformon",
-  "intro": "Ez egy bevezető a hírhez",
-  "body": "Itt van a hír teljes tartalma",
-  "author_id": 1
-}'
+curl -X POST https://your-api-domain/api/news/get 
 ```
 
 #### Válaszok
